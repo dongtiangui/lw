@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lw.dao.AnnounCement">
+
+		<resultMap type="com.lw.model.AnnounCementModel" id="BaseResult">
+			<id column="an_id" property="an_id"/>
+			<result column="an_create_time" property="an_create_time"/>
+			<result column="an_title" property="an_title"/>
+			<result column="an_content" property="an_content"/>
+			<result column="an_pub_person" property="an_pub_person"/>
+			<result column="an_version" property="an_version"/>
+			<result column="an_status" property="an_status"/>
+		</resultMap>
+		
+		<sql id="BaseSql">
+			an_id,an_create_time,an_title,an_content,an_pub_person,an_version,an_status
+		</sql>
+		
+		<select id="findAll" resultMap="BaseResult">
+			
+			SELECT <include refid="BaseSql"></include> FROM system_announcement
+			
+		</select>
+	
+</mapper>

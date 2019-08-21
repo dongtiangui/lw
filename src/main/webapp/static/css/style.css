@@ -1,0 +1,21 @@
+@font-face {
+	font-family: 'Roboto';
+	src: url(. ./ font/ roboto/ Roboto-Bold.ttf '),
+		url(. ./ font/ roboto/ Roboto-Light.ttf '),
+		url(. ./ font/ roboto/ Roboto-Medium.ttf '),
+		url(. ./ font/ roboto/ Roboto-Regular.ttf '),
+		url(. ./ font/ roboto/ Roboto-Thin.ttf ');
+	font-weight: 900;
+	font-style: italic;
+}
+
+.bg {
+	background-image:
+		url("https://mdbootstrap.com/img/Photos/Horizontal/Nature/full page/img(20).jpg");
+	/* Full height */
+	height: 100%;
+	/* Center and scale the image nicely */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}

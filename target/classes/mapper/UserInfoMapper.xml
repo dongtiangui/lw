@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lw.dao.UserInfoMapper">
+
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache">
+		<property name="timeToIdleSeconds" value="3600" />
+		<property name="timeToLiveSeconds" value="3600" />
+		 <!-- 同ehcache参数maxElementsInMemory -->
+		<property name="maxEntriesLocalHeap" value="1000" />
+		 <!-- 同ehcache参数maxElementsOnDisk -->
+		<property name="maxEntriesLocalDisk" value="10000000" />
+		<property name="memoryStoreEvictionPolicy" value="LRU" />
+	</cache>
+
+	<resultMap type="com.lw.model.UserInfoModel"
+		id="BaseResultMap">
+		<id column="id" property="id" />
+		<result column="userId" property="userId" />
+		<result column="userName" property="userName" />
+		<result column="passWord" property="passWord" />
+		<result column="userPhone" property="userPhone" />
+		<result column="userAge" property="userAge" />
+		<result column="userGender" property="userGender" />
+		<result column="nowLoginTime" property="nowLoginTime" />
+		<result column="lastLoginTime" property="lastLoginTime" />
+		<result column="loginCode" property="loginCode" />
+		<result column="isMember" property="isMember" />
+	</resultMap>
+
+	<select id="findUserByUserCode" resultMap="BaseResultMap">
+
+		select * from lovewall_user_info
+
+	</select>
+
+
+</mapper>

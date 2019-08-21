@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lw.dao.AdminUserInfoMapper">
+	<resultMap id="tbUserResultMap" type="com.lw.model.AdminUserInfoModel">
+		<id column="id" property="id"/>
+        <result column="adminId" property="adminId" jdbcType="INTEGER"/>
+        <result column="adminName" property="adminName" jdbcType="VARCHAR"/>
+        <result column="adminPass" property="adminPass" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="salt" property="salt"/>
+        <result column="createTime" property="createTime"/>
+        <result column="upTime" property="upTime"/>
+        <association property="adminRole" javaType="com.lw.model.AdminRole">
+        	<id column="id" property="id"/>
+        	<result column="roleId" property="roleId"/>
+        	<result column="roleName" property="roleName"/>
+        	<result column="roleDescription" property="roleDescription"/>
+        	<result column="roleStatus" property="roleStatus"/>
+        	<result column="createTime" property="createTime"/>
+        	<result column="updateTime" property="updateTime"/>
+        </association>       
+    </resultMap>
+
+	<select id="getUserByUserName" resultMap="tbUserResultMap">
+        select adminId,adminName,adminPass,status,salt,createTime,upTime
+        from lovewall_admin
+        where adminName = #{adminName}
+    </select>
+    
+    <select id="findAdminUserInfoModel" resultMap="tbUserResultMap">
+    	SELECT *			
+    	  FROM lovewall_admin a,lovewall_role r where r.id = a.role_id AND a.adminName=#{adminName}
+    
+    </select>
+    
+    <insert id="addUser">
+    <!--获得自增主键  -->
+        <selectKey keyProperty="adminId" order="AFTER" resultType="int">
+            select last_insert_id()
+        </selectKey>
+        insert into lovewall_admin values(null,#{adminName},#{adminPass})
+    </insert>
+    <select id="getAllUser" resultMap="tbUserResultMap">
+        select adminId,adminName,adminPass,status,salt,createTime,upTime
+        from lovewall_admin
+    </select>
+    
+     <delete id="deleteUser">
+        delete from lovewall_admin where adminId = #{adminId}
+    </delete>
+    <delete id="deleteUserRole">
+        delete from tb_user_role where user_id = #{id}
+    </delete>
+    
+</mapper>

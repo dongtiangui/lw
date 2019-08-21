@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lw.dao.AdminPermissionMapper">
+	<resultMap id="PermissionBaseResultMap"
+		type="com.lw.model.AdminPermissionModel">
+		<id column="id" property="id" />
+		<result column="permissionId" property="permissionId"
+			jdbcType="VARCHAR" />
+		<result column="permissionName" property="permissionName"
+			jdbcType="VARCHAR" />
+		<result column="permissionDescription"
+			property="permissionDescription" jdbcType="VARCHAR" />
+		<result column="permissionUrl" property="permissionUrl"
+			jdbcType="VARCHAR" />
+		<result column="permissionPerms" property="permissionPerms"
+			jdbcType="VARCHAR" />
+		<result column="permissionType" property="permissionType"
+			jdbcType="VARCHAR" />
+		<result column="permissionIcon" property="permissionIcon"
+			jdbcType="VARCHAR" />
+		<result column="permissionStatus" property="permissionStatus"
+			jdbcType="VARCHAR" />
+		<result column="create_time" property="create_time"
+			jdbcType="VARCHAR" />
+		<result column="update_time" property="update_time"
+			jdbcType="VARCHAR" />
+
+		<collection property="roles" ofType="com.lw.model.AdminRole">
+			<id property="id" column="id" />
+			<result property="roleId" column="roleId" />
+			<result property="roleName" column="roleName" />
+			<result property="roleDescription" column="roleDescription" />
+			<result property="roleDescription" column="roleDescription" />
+			<result property="roleStatus" column="roleStatus" />
+			<result property="createTime" column="createTime" />
+			<result property="updateTime" column="updateTime" />
+		</collection>
+	</resultMap>
+
+	<resultMap type="com.lw.model.RolePermission"
+		id="PermissionForRoleBaseResultMap">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="roleId" property="sysRoleId" jdbcType="VARCHAR" />
+		<result column="permisionId" property="sysPermissionId"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,permissionId, permissionName,
+		permissionDescription,
+		permissionUrl,
+		permissionPerms, permissionType,
+		permissionIcon,
+		permissionStatus, create_time,update_time
+	</sql>
+	<select id="findRoleByUserId" resultType="java.lang.String"
+		parameterType="java.lang.String">
+		SELECT
+		roleId
+		FROM
+		lovewall_admin_role
+		WHERE
+		adminId = #{uid}
+
+	</select>
+
+	<select id="findPermissionList"
+		resultMap="PermissionBaseResultMap">
+		SELECT * FROM
+		(lovewall_permission p
+		INNER JOIN
+		lovewall_role_permision r
+		on p.permissionId = r.permissionId)
+        INNER JOIN
+		lovewall_role c
+		ON
+		r.roleId=c.roleId AND c.id=#{role}
+	</select>
+
+</mapper>

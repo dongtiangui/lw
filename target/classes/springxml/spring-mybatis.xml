@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<context:property-placeholder
+		location="classpath:mysql.properties,classpath:postgresql.properties" />
+
+	<bean id="mysqldataSource"
+		class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close"> 
+		<property name="url"
+			value="jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.dbname}?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=true&amp;zeroDateTimeBehavior=convertToNull" />
+		<property name="username" value="${mysql.username}" />
+		<property name="password" value="${mysql.password}" />
+		<property name="driverClassName" value="${driverClassName}" />
+		<property name="filters" value="[]" />
+		<!-- 最大并发连接数 -->
+		<property name="maxActive" value="${maxActive}" />
+		<!-- 初始化连接数量 -->
+		<property name="initialSize" value="${initialSize}" />
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="${maxWait}" />
+		<!-- 最小空闲连接数 -->
+		<property name="minIdle" value="${minIdle}" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis"
+			value="${timeBetweenEvictionRunsMillis}" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis"
+			value="${minEvictableIdleTimeMillis}" />
+		<!-- <property name = "validationQuery" value = "${validationQuery}" /> -->
+		<property name="testWhileIdle" value="${testWhileIdle}" />
+		<property name="testOnBorrow" value="${testOnBorrow}" />
+		<property name="testOnReturn" value="${testOnReturn}" />
+		<property name="maxOpenPreparedStatements"
+			value="${maxOpenPreparedStatements}" />
+		<!-- 打开 removeAbandoned 功能 -->
+		<property name="removeAbandoned" value="${removeAbandoned}" />
+		<!-- 1800 秒，也就是 30 分钟 -->
+		<property name="removeAbandonedTimeout"
+			value="${removeAbandonedTimeout}" />
+		<!-- 关闭 abanded 连接时输出错误日志 -->
+		<property name="logAbandoned" value="${logAbandoned}" />
+		<property name="proxyFilters">
+			<list>
+				<ref bean="wall-filter" />
+				<ref bean="stat-filter" />
+				<ref bean="log-filter" />
+			</list>
+		</property>
+	</bean>
+	<!-- postgresql -->
+	<bean id="postgresqldataSource"
+		class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close"> 
+		<property name="url" value="${ticket.database.url}" />
+		<property name="username" value="${ticket.database.username}" />
+		<property name="password" value="${ticket.database.password}" />
+		<property name="driverClassName"
+			value="${ticket.database.driver}" />
+		<property name="filters" value="[]" />
+		<!-- 最大并发连接数 -->
+		<property name="maxActive" value="${maxActive}" />
+		<!-- 初始化连接数量 -->
+		<property name="initialSize" value="${initialSize}" />
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="${maxWait}" />
+		<!-- 最小空闲连接数 -->
+		<property name="minIdle" value="${minIdle}" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis"
+			value="${timeBetweenEvictionRunsMillis}" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis"
+			value="${minEvictableIdleTimeMillis}" />
+		<!-- <property name = "validationQuery" value = "${validationQuery}" /> -->
+		<property name="testWhileIdle" value="${testWhileIdle}" />
+		<property name="testOnBorrow" value="${testOnBorrow}" />
+		<property name="testOnReturn" value="${testOnReturn}" />
+		<property name="maxOpenPreparedStatements"
+			value="${maxOpenPreparedStatements}" />
+		<!-- 打开 removeAbandoned 功能 -->
+		<property name="removeAbandoned" value="${removeAbandoned}" />
+		<!-- 1800 秒，也就是 30 分钟 -->
+		<property name="removeAbandonedTimeout"
+			value="${removeAbandonedTimeout}" />
+		<!-- 关闭 abanded 连接时输出错误日志 -->
+		<property name="logAbandoned" value="${logAbandoned}" />
+		<property name="proxyFilters">
+			<list>
+				<ref bean="wall-filter" />
+				<ref bean="stat-filter" />
+				<ref bean="log-filter" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 慢SQL记录 -->
+	<bean id="stat-filter"
+		class="com.alibaba.druid.filter.stat.StatFilter">
+		<!-- 慢sql时间设置,即执行时间大于200毫秒的都是慢sql -->
+		<property name="slowSqlMillis" value="2000" />
+		<property name="logSlowSql" value="true" />
+	</bean>
+
+	<bean id="log-filter"
+		class="com.alibaba.druid.filter.logging.Log4jFilter">
+		<property name="dataSourceLogEnabled" value="true" />
+		<property name="statementExecutableSqlLogEnable" value="true" />
+	</bean>
+
+	<!-- 防御SQL攻击 -->
+	<bean id="wall-filter" class="com.alibaba.druid.wall.WallFilter">
+		<property name="config" ref="wall-config" />
+		<property name="logViolation" value="true" />
+		<!-- <property name="throwException" value="false" /> -->
+	</bean>
+	<bean id="wall-config" class="com.alibaba.druid.wall.WallConfig">
+		<property name="deleteAllow" value="false" />
+		<property name="truncateAllow" value="false" />
+		<property name="dropTableAllow" value="false" />
+		<property name="alterTableAllow" value="false" />
+		<property name="deleteWhereNoneCheck" value="false" />
+		<property name="updateWhereNoneCheck" value="false" />
+	</bean>
+	<!-- druid spring监控 start -->
+	<bean id="druid-stat-interceptor"
+		class="com.alibaba.druid.support.spring.stat.DruidStatInterceptor">
+	</bean>
+
+	<bean id="druid-stat-pointcut"
+		class="org.springframework.aop.support.JdkRegexpMethodPointcut"
+		scope="prototype">
+		<property name="patterns">
+			<list>
+				<value>com.lw.dao.*</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="dataSource" class="com.lw.configuration.DynamicDataSource"><!--注意： 这里写选择数据源的类地址 下面跟着给出-->
+         <property name="defaultTargetDataSource"
+			ref="mysqldataSource" /><!-- 设置默认为此mySqlDataSource数据源 -->
+		<property name="targetDataSources">
+			<map>
+				<entry key="mysqldataSource" value-ref="mysqldataSource" />
+				<entry key="postgresqldataSource"
+					value-ref="postgresqldataSource" />
+			</map>
+		</property>
+     </bean>
+	
+	<!-- sqlsession -->
+	<!-- 3.配置SqlSessionFactory对象 -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 注入数据库连接池 -->
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 配置MyBaties全局配置文件:mybatis-config.xml -->
+		<property name="configLocation"
+			value="classpath:mybatis-config.xml" />
+		<!-- 扫描entity包 使用别名 -->
+		<property name="typeAliasesPackage" value="com.lw.model" />
+		<!-- 扫描sql配置文件:mapper需要的xml文件 -->
+		<property name="mapperLocations"
+			value="classpath:mapper/*.xml" />
+	</bean>
+	<!-- 4.配置扫描Dao接口包，动态实现Dao接口，注入到spring容器中 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 注入sqlSessionFactory -->
+		<property name="sqlSessionFactoryBeanName"
+			value="sqlSessionFactory" />
+		<!-- 给出需要扫描Dao接口包 -->
+		<property name="basePackage" value="com.lw.dao" />
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!-- 创建基于类的代理 -->
+	<aop:config proxy-target-class="true">
+		<aop:advisor advice-ref="druid-stat-interceptor"
+			pointcut-ref="druid-stat-pointcut" />
+	</aop:config>
+</beans>
